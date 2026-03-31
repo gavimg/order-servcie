@@ -1,5 +1,6 @@
 package com.gavi.microservices.order_service.service;
 
+import com.gavi.microservices.order_service.client.InventoryClient;
 import com.gavi.microservices.order_service.dto.OrderRequest;
 import com.gavi.microservices.order_service.dto.OrderResponse;
 import com.gavi.microservices.order_service.exception.OrderNotFoundException;
@@ -22,8 +23,15 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final InventoryClient inventoryClient;
 
     public void placeOrder(OrderRequest orderRequest) {
+        var productInStock = inventoryClient.isInStock(orderRequest.skuCode(), orderRequest.quantity());
+        if (!productInStock) {
+            log.info("Product with SkuCode {} is not in stock", orderRequest.skuCode());
+            throw new RuntimeException(String.format("Product with SkuCode %s is not in stock", orderRequest.skuCode()));
+        }
+
         Order order = new Order();
         order.setOrderNumber(UUID.randomUUID().toString());
         order.setSkuCode(orderRequest.skuCode());

@@ -1,5 +1,6 @@
 package com.gavi.microservices.order_service;
 
+import com.gavi.microservices.order_service.stubs.InventoryClientStub;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
@@ -10,11 +11,13 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
 import org.testcontainers.mysql.MySQLContainer;
-
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@EnableWireMock({ @ConfigureWireMock(name = "wiremock-server", port = 0, filesUnderClasspath = "wiremock") })
 class OrderServiceApplicationTests {
 
 	@ServiceConnection
@@ -42,6 +45,8 @@ class OrderServiceApplicationTests {
                      "quantity": 1
                 }
                 """;
+		InventoryClientStub.stubInventoryCall("iphone_15", 1);
+
 		var responseBodyString =  RestAssured.given()
 				.contentType(ContentType.JSON)
 				.body(submitOrderJson)

@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/inventory",
+    "queryParameters": {
+      "skuCode": {
+        "equalTo": "iphone_15"
+      },
+      "quantity": {
+        "equalTo": "1"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "true"
+  }
+}

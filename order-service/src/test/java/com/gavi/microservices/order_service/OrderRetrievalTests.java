@@ -10,11 +10,13 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
 import org.testcontainers.mysql.MySQLContainer;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
 
-import java.math.BigDecimal;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@EnableWireMock({ @ConfigureWireMock(name = "wiremock-server", port = 0, filesUnderClasspath = "wiremock") })
 class OrderRetrievalTests {
 
     @ServiceConnection
