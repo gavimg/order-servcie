@@ -15,4 +15,12 @@ public class InventoryClientStub {
                         .withHeader("Content-Type", "application/json")
                         .withBody("true")));
     }
+
+    public static void stubInventoryFailure(String skuCode, Integer quantity, int statusCode) {
+        stubFor(get(urlEqualTo("/api/inventory?skuCode=" + skuCode + "&quantity=" + quantity))
+                .willReturn(aResponse()
+                        .withStatus(statusCode)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"message\":\"inventory unavailable\"}")));
+    }
 }

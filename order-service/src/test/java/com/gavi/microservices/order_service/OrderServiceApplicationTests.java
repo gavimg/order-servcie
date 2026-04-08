@@ -62,4 +62,26 @@ class OrderServiceApplicationTests {
 		assertThat(responseBodyString, Matchers.is("Order Placed Successfully"));
 	}
 
+	@Test
+	void shouldReturnServiceUnavailableWhenInventoryServiceFails() {
+		String submitOrderJson = """
+                {
+                     "skuCode": "iphone_15_pro",
+                     "price": 1200,
+                     "quantity": 1
+                }
+                """;
+		InventoryClientStub.stubInventoryFailure("iphone_15_pro", 1, 503);
+
+		RestAssured.given()
+				.contentType(ContentType.JSON)
+				.body(submitOrderJson)
+				.when()
+				.post("/api/order")
+				.then()
+				.log().all()
+				.statusCode(503)
+				.body("message", Matchers.is("Inventory service is currently unavailable. Please try again later."));
+	}
+
 }
